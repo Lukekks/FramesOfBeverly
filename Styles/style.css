@@ -160,6 +160,7 @@ nav a:hover {
     display: flex;
     gap: 5%;
     align-items: flex-start;
+    flex-direction: row; /* Garante que seja row no desktop */
 }
 
 .sobre-images {
@@ -168,6 +169,7 @@ nav a:hover {
     align-items: flex-start;
     gap: 5%;
     flex-basis: 50%;
+    order: 1; /* Ordem no desktop */
 }
 
 .sobre-images img {
@@ -176,7 +178,8 @@ nav a:hover {
 }
 
 .sobre-text {
-    flex-basis: 65%; /* Ocupa 65% do espaço */
+    flex-basis: 65%;
+    order: 2; /* Ordem no desktop */
 }
 
 .sobre-text h3 {
@@ -184,6 +187,7 @@ nav a:hover {
     font-weight: 700;
     letter-spacing: 1px;
     margin-bottom: 20px;
+    text-align: left; /* Alinhamento à esquerda no desktop */
 }
 
 .sobre-text p {
@@ -442,6 +446,12 @@ footer {
 
 /* --- MEDIA QUERIES --- */
 @media (max-width: 768px) {
+    .sobre-content {
+        display: flex;
+        gap: 5%;
+        align-items: flex-start;
+        flex-direction: column; /* Garante que seja row no desktop */
+    }
     .sobre-section {
         display: flex;
         flex-direction: column;
@@ -487,53 +497,52 @@ footer {
         border: none;
     }
 
-.portfolio-grid-wrapper {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 16px;
-}
+    .portfolio-grid-wrapper {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 16px;
+    }
 
-.portfolio-grid {
-    display: flex;
-    flex-direction: row;
-    overflow: hidden;
-    gap: 16px;
-    width: 100%;
-}
-
-.gallery-item {
-    flex: 0 0 100%;
-    height: auto;
-}
-
-#portfolio-filtros {
-    display: none;
-}
-
-.portfolio-pagination {
-    display: none;
-}
-
-.mobile-arrows-container {
-    display: flex;
-    gap: 32px;
-    justify-content: center;
-    width: 100%;
-    margin-top: 16px;
-    padding: 0 20px;
-}
-
-.arrow-btn {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    width: 40px;
-    height: 40px;
-}
-
-@media (max-width: 768px) {
     .portfolio-grid {
+        display: flex;
+        flex-direction: row;
+        overflow: hidden;
+        gap: 16px;
+        width: 100%;
+    }
+
+    .gallery-item {
+        flex: 0 0 100%;
+        height: auto;
+    }
+
+    #portfolio-filtros {
+        display: none;
+    }
+
+    .portfolio-pagination {
+        display: none;
+    }
+
+    .mobile-arrows-container {
+        display: flex;
+        gap: 32px;
+        justify-content: center;
+        width: 100%;
+        margin-top: 16px;
+        padding: 0 20px;
+    }
+
+    .arrow-btn {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        width: 40px;
+        height: 40px;
+    }
+
+        .portfolio-grid {
         margin-bottom: 8px;
     }
     
@@ -543,7 +552,8 @@ footer {
         left: 0;
         right: 0;
     }
-}    .sobre-text h3 {
+
+    .sobre-text h3 {
         font-size: 1.5rem;
         text-align: center;
     }
