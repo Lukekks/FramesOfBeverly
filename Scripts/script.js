@@ -41,22 +41,64 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     });
 
-    document.getElementById('arrow-left').onclick = () => {
-        if (startIdx > 0) {
+    let currentIdx = 0;
+    const items = Array.from(grid.children);
+
+    // Função para exibir apenas a imagem atual no mobile
+    function showMobileImage() {
+        items.forEach((item, idx) => {
+            item.style.display = idx === currentIdx ? 'block' : 'none';
+        });
+    }
+
+    // Configuração inicial com base no tamanho da tela
+    if (window.matchMedia('(max-width: 768px)').matches) {
+        showMobileImage();
+    } else {
+        showItems();
+    }
+
+    // Event listeners para as setas
+    function handleMobileNavigation(direction) {
+        if (direction === 'prev' && currentIdx > 0) {
+            currentIdx--;
+            showMobileImage();
+        } else if (direction === 'next' && currentIdx < items.length - 1) {
+            currentIdx++;
+            showMobileImage();
+        }
+    }
+
+    function handleDesktopNavigation(direction) {
+        if (direction === 'prev' && startIdx > 0) {
             startIdx -= ITEMS_PER_PAGE;
             showItems();
+        } else if (direction === 'next') {
+            const filteredItems = getFilteredItems();
+            if (startIdx + ITEMS_PER_PAGE < filteredItems.length) {
+                startIdx += ITEMS_PER_PAGE;
+                showItems();
+            }
         }
-    };
+    }
 
-    document.getElementById('arrow-right').onclick = () => {
-        const filteredItems = getFilteredItems();
-        if (startIdx + ITEMS_PER_PAGE < filteredItems.length) {
-            startIdx += ITEMS_PER_PAGE;
-            showItems();
+    // Função principal de navegação
+    function handleNavigation(direction, isMobile) {
+        if (isMobile) {
+            handleMobileNavigation(direction);
+        } else {
+            handleDesktopNavigation(direction);
         }
-    };
+    }
 
-    showItems();
+    // Event listeners iniciais
+    document.getElementById('arrow-left').addEventListener('click', () => {
+        handleNavigation('prev', window.matchMedia('(max-width: 768px)').matches);
+    });
+
+    document.getElementById('arrow-right').addEventListener('click', () => {
+        handleNavigation('next', window.matchMedia('(max-width: 768px)').matches);
+    });
 
     // Popup para galeria
     const galleryItemsPortfolio = document.querySelectorAll('.portfolio-grid .gallery-item');
@@ -122,4 +164,89 @@ document.addEventListener('DOMContentLoaded', function() {
             });
         });
     });
+
+    // Adicione este código ao seu JavaScript
+    function setupMobileArrows() {
+        const portfolioGrid = document.querySelector('.portfolio-grid');
+        const portfolioWrapper = document.querySelector('.portfolio-grid-wrapper');
+        const arrowLeft = document.getElementById('arrow-left');
+        const arrowRight = document.getElementById('arrow-right');
+        
+        // Cria container para setas mobile
+        const mobileArrowsContainer = document.createElement('div');
+        mobileArrowsContainer.className = 'mobile-arrows-container';
+        
+        function reorganizeArrows() {
+            const isMobile = window.innerWidth <= 768;
+            
+            if (isMobile) { // mobile
+                if (!document.querySelector('.mobile-arrows-container')) {
+                    // Remove as setas da posição original
+                    arrowLeft.remove();
+                    arrowRight.remove();
+                    
+                    // Recria as setas na ordem correta
+                    mobileArrowsContainer.innerHTML = '';
+                    const newArrowLeft = arrowLeft.cloneNode(true);
+                    const newArrowRight = arrowRight.cloneNode(true);
+                    
+                    // Mantém os mesmos IDs para manter a funcionalidade
+                    newArrowLeft.id = 'arrow-left';
+                    newArrowRight.id = 'arrow-right';
+                    
+                    // Mantém as setas nos lados corretos
+                    mobileArrowsContainer.appendChild(newArrowLeft);
+                    mobileArrowsContainer.appendChild(newArrowRight);
+                    
+                    // Adiciona após o grid
+                    portfolioGrid.parentNode.insertBefore(mobileArrowsContainer, portfolioGrid.nextSibling);
+                    
+                    // Reaplica os event listeners
+                    newArrowLeft.addEventListener('click', () => {
+                        handleNavigation('prev', true);
+                    });
+                    
+                    newArrowRight.addEventListener('click', () => {
+                        handleNavigation('next', true);
+                    });
+                }
+            } else { // desktop
+                const mobileContainer = document.querySelector('.mobile-arrows-container');
+                if (mobileContainer) {
+                    mobileContainer.remove();
+                }
+                
+                // Restaura as setas na posição original para desktop
+                if (!portfolioWrapper.contains(arrowLeft)) {
+                    portfolioWrapper.insertBefore(arrowLeft, portfolioGrid);
+                    portfolioWrapper.appendChild(arrowRight);
+                    
+                    // Reaplica os event listeners para desktop
+                    arrowLeft.addEventListener('click', () => {
+                        handleNavigation('prev', false);
+                    });
+                    
+                    arrowRight.addEventListener('click', () => {
+                        handleNavigation('next', false);
+                    });
+                }
+            }
+            
+            // Atualiza a exibição baseada no modo atual
+            if (isMobile) {
+                showMobileImage();
+            } else {
+                showItems();
+            }
+        }
+
+        // Executa quando a página carrega
+        reorganizeArrows();
+        
+        // Executa quando a janela é redimensionada
+        window.addEventListener('resize', reorganizeArrows);
+    }
+
+    // Chama a função quando o documento estiver pronto
+    setupMobileArrows();
 });
